@@ -1,0 +1,5 @@
+mainClass: "me.xtrm.delta.loader.DeltaLoader"
+repositories: ['https://nkosmos.github.io/maven/', 'https://jcenter.bintray.com/', 'https://repo1.maven.org/maven2/']
+libraries: ['club.minnced:discord-rpc-release:v3.4.0',
+  'club.minnced:java-discord-rpc:2.0.1', 'net.java.dev.jna:jna:4.4.0', 
+  'com.thealtening.api:api:4.0.1', 'com.thealtening.auth:auth:3.0.2']

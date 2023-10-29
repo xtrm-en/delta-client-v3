@@ -1,0 +1,134 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenLocal()
+        mavenCentral()
+
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            url = "https://plugins.gradle.org/m2"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+apply plugin: "forge"
+
+group = "me.xtrm.delta"
+archivesBaseName = "Delta"
+version = "b4"
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+compileJava.options.encoding = 'UTF-8'
+
+minecraft {
+    version = "1.7.10-10.13.4.1614-1.7.10"
+    runDir = "run"
+}
+
+sourceSets {
+    loader {
+        compileClasspath += main.compileClasspath
+        java {
+            srcDirs 'src/loader/java'
+        }
+        resources {
+            srcDirs 'src/loader/resources'
+        }
+    }
+    xeonloader {
+        compileClasspath += main.compileClasspath
+        java {
+            srcDirs 'src/xeonloader/java'
+        }
+        resources {
+            srcDirs 'src/xeonloader/resources'
+        }
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    
+    maven { 
+        url = 'https://jitpack.io' 
+    }
+    maven {
+        url = "https://nkosmos.github.io/maven/" // DeltaAPI
+    }
+}
+
+dependencies {
+	// Komodo
+	// compile 'fr.nkosmos.komodo:Komodo:1.0.0'
+	// FILS DEP TUE NIQUE BIEN TA MEER CA FAIT DEPUIS ce matin QUE JAI CETTE ERREUR ESPECE DENCULE
+	// TODO: exclude ASM, gson & log4j
+
+    // DeltaAPI
+    compile 'me.xtrm.delta:delta-api-deobf:2.1.3'
+    
+    // Discord RPC
+    compile 'club.minnced:java-discord-rpc:2.0.1'
+    compile 'net.java.dev.jna:jna:4.4.0'
+    
+    // TheAltening
+    compile 'com.thealtening.api:api:4.0.1'
+    compile 'com.thealtening.auth:auth:3.0.2'
+}
+
+jar {
+	baseName = "DeltaClient"
+	from sourceSets.main.output
+    sourceSets.main.compileClasspath += sourceSets.loader.output
+
+    manifest.attributes(
+        'Implementation-Title': archivesBaseName,
+        'Implementation-Version': version
+    )
+}
+
+publishing.publications {
+    mavenJava(MavenPublication) {
+        from components.java
+    }
+}
+
+task loaderJar(type: Jar) {
+    baseName = "DeltaLoader"
+    from sourceSets.loader.output
+    manifest.attributes(
+        'Implementation-Title': "DeltaLoader",
+        'Implementation-Version': "3.0.0"
+    )
+}
+
+task xeonloaderJar(type: Jar) {
+    baseName = "XeonLoader"
+    from sourceSets.xeonloader.output
+    manifest.attributes(
+        'Implementation-Title': "XeonLoader",
+        'Implementation-Version': "3.0.0",
+        'TweakClass': "me.xtrm.xeon.loader.XeonLoader",
+        'TweakOrder': 999
+    )
+}
+
+loaderJar.finalizedBy reobf
+xeonloaderJar.finalizedBy reobf

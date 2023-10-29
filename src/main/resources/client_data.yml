@@ -1,0 +1,2 @@
+mainClass: "me.xtrm.delta.client.Delta"
+plugins: [me.xtrm.elf.Elf, me.xtrm.xeon.Xeon] 
